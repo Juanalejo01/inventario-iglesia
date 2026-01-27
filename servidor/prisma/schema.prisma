@@ -1,0 +1,79 @@
+// servidor/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. El Usuario (Admin o Colaborador)
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+
+  // Relaciones
+  ownedBoards     Board[]       @relation("Owner") // Tableros que creó
+  memberBoards    BoardMember[] // Tableros donde es invitado para editar
+}
+
+// 2. El Tablero (El inventario de la iglesia)
+model Board {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(uuid()) // Esta será la URL pública (ej: app.com/tablero/a1b2-c3d4)
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  
+  // El dueño del tablero (Admin supremo del tablero)
+  ownerId     Int
+  owner       User     @relation("Owner", fields: [ownerId], references: [id])
+
+  // Relaciones
+  members     BoardMember[] // Gente autorizada a editar
+  departments Department[]  // Departamentos (Música, Limpieza, etc.)
+}
+
+// 3. Miembros con permisos (Autorizados por el admin)
+model BoardMember {
+  id      Int    @id @default(autoincrement())
+  role    String @default("EDITOR") // "EDITOR" (solo cantidades)
+
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+
+  boardId Int
+  board   Board  @relation(fields: [boardId], references: [id])
+
+  @@unique([userId, boardId]) // Un usuario no puede estar dos veces en el mismo tablero
+}
+
+// 4. Departamentos / Comités
+model Department {
+  id      Int       @id @default(autoincrement())
+  name    String
+  boardId Int
+  board   Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  
+  products Product[]
+}
+
+// 5. Los Productos
+model Product {
+  id           Int        @id @default(autoincrement())
+  name         String
+  quantity     Int        @default(0)
+  price        Decimal    @default(0.0) // Usamos Decimal para dinero
+  info         String?    @db.Text      // Información adicional (texto largo)
+  
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
