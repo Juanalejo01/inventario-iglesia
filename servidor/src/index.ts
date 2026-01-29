@@ -1,41 +1,28 @@
 import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
+// 1. Importamos la función de registro que acabas de crear
+import { registerUser } from "./controllers/userController";
 
-// 1. Configuración inicial
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
-// 2. Middlewares (Gestores de tráfico)
-app.use(cors()); // Permite conexiones externas
-app.use(express.json()); // Permite recibir datos en formato JSON
+app.use(cors());
+app.use(express.json());
 
-// 3. Rutas de prueba
-app.get("/", (req, res) => {
-  res.send(
-    "¡Hola! El servidor del Inventario de la Iglesia está funcionando ⛪",
-  );
+// --- RUTAS ---
+
+// Ruta de prueba
+app.get("/ping", (req, res) => {
+  res.json({ message: "Conexión a MySQL exitosa" });
 });
 
-// Ruta para probar la conexión a la base de datos
-app.get("/ping", async (req, res) => {
-  try {
-    const users = await prisma.user.findMany(); // Intenta buscar usuarios (aunque esté vacío)
-    res.json({
-      status: "OK",
-      message: "Conexión a MySQL exitosa",
-      userCount: users.length,
-    });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ status: "ERROR", message: "No se pudo conectar a la BD" });
-  }
-});
+// 2. NUEVA RUTA: Registro de usuarios
+// Cuando llegue una petición POST a '/register', se ejecuta 'registerUser'
+app.post("/register", registerUser);
 
-// 4. Arrancar el servidor
+// --- ARRANQUE ---
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });

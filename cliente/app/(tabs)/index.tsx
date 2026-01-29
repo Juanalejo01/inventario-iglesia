@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+// AQUI: Añadimos TouchableOpacity a la lista
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import axios from "axios";
+// AQUI: Importamos Link para poder navegar
+import { Link } from "expo-router";
 
 // IMPORTANTE: Subimos 2 niveles (../../) para llegar a 'src'
 import API_URL from "../../src/config";
@@ -56,6 +65,19 @@ export default function HomeScreen() {
           Toca aquí para reintentar
         </Text>
       )}
+
+      {/* --- AQUI VA EL BOTÓN NUEVO --- */}
+      <View style={{ marginTop: 40 }}>
+        <Link href="/register" asChild>
+          <TouchableOpacity
+            style={{ backgroundColor: "#333", padding: 15, borderRadius: 8 }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              Ir a Crear Cuenta
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
     </View>
   );
 }
