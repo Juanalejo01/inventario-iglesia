@@ -78,6 +78,32 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </Link>
       </View>
+
+      {/* Botón LOGIN */}
+      <View style={{ marginTop: 20 }}>
+        <Link href="/login" asChild>
+          <TouchableOpacity
+            style={{ backgroundColor: "#34C759", padding: 15, borderRadius: 8 }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              Iniciar Sesión
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
+
+      {/* Botón REGISTRO (El que ya tenías) */}
+      <View style={{ marginTop: 10 }}>
+        <Link href="/register" asChild>
+          <TouchableOpacity
+            style={{ backgroundColor: "#333", padding: 15, borderRadius: 8 }}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              Ir a Crear Cuenta
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
     </View>
   );
 }
